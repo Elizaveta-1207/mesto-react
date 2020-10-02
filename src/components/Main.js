@@ -1,10 +1,12 @@
 import React from "react";
 import { api } from "../utils/api";
+import Card from "./Card";
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
+function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
   const [userName, setUserName] = React.useState();
   const [userDescription, setUserDescription] = React.useState();
   const [userAvatar, setUserAvatar] = React.useState();
+  const [cards, setCards] = React.useState([]);
 
   React.useEffect(() => {
     const promises = [api.getUserInfo(), api.getInitialCards()];
@@ -13,26 +15,33 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
       .then((results) => {
         // console.log(results);
         setupUser(results[0]);
-        // setupCards(results[1]);
-
-        // добавление слушателей на кнопки после получения информации о пользователе и карточках с сервера
-        // editButton.addEventListener("click", openPopupEdit);
-        // addButton.addEventListener("click", openPopupAdd);
-        // profileAvatar.addEventListener("click", openPopupAvatar);
+        setupCards(results[1]);
       })
       .catch((err) => console.log(`Error ${err}`));
 
     // переменная для запоминания пользователя, который что-то делает на страничке (а именно меня)
-    let currentUser = null;
+    // let currentUser = null;
 
     // функция установки информации о пользователе, например с сервера
     function setupUser(user) {
       setUserName(user.name);
       setUserDescription(user.about);
       setUserAvatar(user.avatar);
-      currentUser = user;
+      // currentUser = user;
     }
-  });
+
+    function setupCards(cards) {
+      setCards(
+        cards.map((item) => ({
+          id: item._id,
+          link: item.link,
+          name: item.name,
+          owner: item.owner,
+          likes: item.likes,
+        }))
+      );
+    }
+  }, []);
 
   return (
     <main className="main">
@@ -45,8 +54,13 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar }) {
         </div>
         <button aria-label="Добавить пост" type="button" className="profile__add-button" onClick={onAddPlace}></button>
       </section>
+
       <section className="elements">
-        <ul className="elements__list"></ul>
+        <ul className="elements__list">
+          {cards.map((props) => (
+            <Card key={props.id} link={props.link} name={props.name} likes={props.likes} onCardClick={onCardClick} />
+          ))}
+        </ul>
       </section>
     </main>
   );

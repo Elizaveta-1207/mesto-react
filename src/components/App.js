@@ -1,4 +1,5 @@
 import React from "react";
+import "../index.css";
 import Header from "./Header";
 import Footer from "./Footer";
 import Main from "./Main";
@@ -6,43 +7,53 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 
 function App() {
-  const [isEditProfilePopupOpen, setisEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setisAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setisEditAvatarPopupOpen] = React.useState(false);
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({ isOpen: false });
 
   function handleEditProfileClick() {
-    setisEditProfilePopupOpen(true);
+    setIsEditProfilePopupOpen(true);
   }
 
   function handleAddPlaceClick() {
-    setisAddPlacePopupOpen(true);
+    setIsAddPlacePopupOpen(true);
   }
 
   function handleEditAvatarClick() {
-    setisEditAvatarPopupOpen(true);
+    setIsEditAvatarPopupOpen(true);
+  }
+
+  function handleCardClick(card) {
+    setSelectedCard({
+      isOpen: true,
+      link: card.link,
+      title: card.name,
+    });
   }
 
   function closeAllPopups() {
-    setisEditProfilePopupOpen(false);
-    setisAddPlacePopupOpen(false);
-    setisEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setSelectedCard({ isOpen: false });
   }
 
   return (
-    <div class="page">
+    <div className="page">
       <Header />
-      <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
+      <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} />
       <Footer />
 
       <PopupWithForm name={"edit"} title={"Редактировать профиль"} buttonTitle={"Сохранить"} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-        <input required name="name" type="text" placeholder="Введите имя" maxlength="40" minlength="2" className="popup__input popup__input_name" id="name-input" />
+        <input required name="name" type="text" placeholder="Введите имя" maxLength="40" minLength="2" className="popup__input popup__input_name" id="name-input" />
         <span id="name-input-error"></span>
-        <input required name="description" type="text" placeholder="Введите описание" maxlength="200" minlength="2" className="popup__input popup__input_description" id="description-input" />
+        <input required name="description" type="text" placeholder="Введите описание" maxLength="200" minLength="2" className="popup__input popup__input_description" id="description-input" />
         <span id="description-input-error"></span>
       </PopupWithForm>
 
       <PopupWithForm name={"add"} title={"Новое место"} buttonTitle={"Создать"} isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
-        <input required name="name" type="text" placeholder="Название" maxlength="30" minlength="1" className="popup__input popup__input_title" id="title-input" />
+        <input required name="name" type="text" placeholder="Название" maxLength="30" minLength="1" className="popup__input popup__input_title" id="title-input" />
         <span id="title-input-error"></span>
         <input required name="link" type="url" placeholder="Ссылка на картинку" className="popup__input popup__input_link" id="link-input" />
         <span id="link-input-error"></span>
@@ -53,9 +64,9 @@ function App() {
         <span id="link-input-error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name={"confirm"} title={"Вы уверены?"} buttonTitle={"Да"}></PopupWithForm>
+      <PopupWithForm name={"confirm"} title={"Вы уверены?"} buttonTitle={"Да"} onClose={closeAllPopups}></PopupWithForm>
 
-      <ImagePopup />
+      <ImagePopup link={selectedCard.link} title={selectedCard.title} isOpen={selectedCard.isOpen} onClose={closeAllPopups} />
     </div>
   );
 }
