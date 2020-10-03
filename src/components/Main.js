@@ -1,12 +1,36 @@
 import React from "react";
 import { api } from "../utils/api";
 import Card from "./Card";
+import initialAvatar from "../images/profile-avatar.jpg";
 
 function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
-  const [userName, setUserName] = React.useState();
-  const [userDescription, setUserDescription] = React.useState();
-  const [userAvatar, setUserAvatar] = React.useState();
+  const [userName, setUserName] = React.useState("Жак-Ив Кусто");
+  const [userDescription, setUserDescription] = React.useState("Исследователь океана");
+  const [userAvatar, setUserAvatar] = React.useState(initialAvatar);
   const [cards, setCards] = React.useState([]);
+
+  // переменная для запоминания пользователя, который что-то делает на страничке (а именно меня)
+  // let currentUser = null;
+
+  // функция установки информации о пользователе, например с сервера
+  function setupUser(user) {
+    setUserName(user.name);
+    setUserDescription(user.about);
+    setUserAvatar(user.avatar);
+    // currentUser = user;
+  }
+
+  function setupCards(cards) {
+    setCards(
+      cards.map((item) => ({
+        id: item._id,
+        link: item.link,
+        name: item.name,
+        owner: item.owner,
+        likes: item.likes,
+      }))
+    );
+  }
 
   React.useEffect(() => {
     const promises = [api.getUserInfo(), api.getInitialCards()];
@@ -18,29 +42,6 @@ function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
         setupCards(results[1]);
       })
       .catch((err) => console.log(`Error ${err}`));
-
-    // переменная для запоминания пользователя, который что-то делает на страничке (а именно меня)
-    // let currentUser = null;
-
-    // функция установки информации о пользователе, например с сервера
-    function setupUser(user) {
-      setUserName(user.name);
-      setUserDescription(user.about);
-      setUserAvatar(user.avatar);
-      // currentUser = user;
-    }
-
-    function setupCards(cards) {
-      setCards(
-        cards.map((item) => ({
-          id: item._id,
-          link: item.link,
-          name: item.name,
-          owner: item.owner,
-          likes: item.likes,
-        }))
-      );
-    }
   }, []);
 
   return (
