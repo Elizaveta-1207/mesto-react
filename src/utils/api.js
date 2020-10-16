@@ -59,40 +59,6 @@ class Api {
     });
   }
 
-  addLike(cardId) {
-    return fetch(`${this._token}/cards/likes/${cardId}`, {
-      method: "PUT",
-      headers: {
-        authorization: this._authorization,
-        "Content-Type": this._contentType,
-      },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
-  }
-
-  deleteLike(cardId) {
-    return fetch(`${this._token}/cards/likes/${cardId}`, {
-      method: "DELETE",
-      headers: {
-        authorization: this._authorization,
-        "Content-Type": this._contentType,
-      },
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      // если ошибка, отклоняем промис
-      return Promise.reject(`Ошибка: ${res.status}`);
-    });
-  }
-
   changeLikeCardStatus(cardId, isLiked) {
     return fetch(`${this._token}/cards/likes/${cardId}`, {
       method: isLiked ? "PUT" : "DELETE",
@@ -147,7 +113,7 @@ class Api {
     });
   }
 
-  editAvatar({ link }) {
+  editAvatar({ avatar }) {
     return fetch(`${this._token}/users/me/avatar`, {
       method: "PATCH",
       headers: {
@@ -155,7 +121,7 @@ class Api {
         "Content-Type": this._contentType,
       },
       body: JSON.stringify({
-        avatar: `${link}`,
+        avatar: `${avatar}`,
       }),
     }).then((res) => {
       if (res.ok) {
