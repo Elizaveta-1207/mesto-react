@@ -93,6 +93,23 @@ class Api {
     });
   }
 
+  changeLikeCardStatus(cardId, isLiked) {
+    return fetch(`${this._token}/cards/likes/${cardId}`, {
+      method: isLiked ? "PUT" : "DELETE",
+      headers: {
+        authorization: this._authorization,
+        "Content-Type": this._contentType,
+      },
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+
+      // если ошибка, отклоняем промис
+      return Promise.reject(`Ошибка: ${res.status}`);
+    });
+  }
+
   getUserInfo() {
     return fetch(`${this._token}/users/me`, {
       method: "GET",
@@ -109,7 +126,7 @@ class Api {
     });
   }
 
-  editProfile({ name, description }) {
+  editProfile({ name, about }) {
     return fetch(`${this._token}/users/me`, {
       method: "PATCH",
       headers: {
@@ -118,7 +135,7 @@ class Api {
       },
       body: JSON.stringify({
         name: name,
-        about: description,
+        about: about,
       }),
     }).then((res) => {
       if (res.ok) {
